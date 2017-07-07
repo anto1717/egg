@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-
 const mm = require('egg-mock');
 const createHttpclient = require('../../../lib/core/httpclient');
 const utils = require('../../utils');
@@ -89,6 +88,19 @@ describe('test/lib/core/httpclient.test.js', () => {
     client.request(url).catch(() => {
       // it will print
       // console.error(e.stack);
+    });
+  });
+
+  describe('httpclient.timeout < 30000', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/httpclient-timeout-3000');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should auto reset to 30000', () => {
+      assert(app.config.httpclient.timeout === 3000);
     });
   });
 });
